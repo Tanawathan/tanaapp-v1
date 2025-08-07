@@ -2,6 +2,10 @@
 
 import { useState, useEffect } from 'react'
 import { aiChatManager, ReadStatus, TypingStatus } from './utils/aiChatManager'
+import PetDisplay from './components/PetDisplay'
+import PetStatus from './components/PetStatus'
+import PetShop from './components/PetShop'
+import AchievementPanel from './components/AchievementPanel'
 
 // 消息類型定義
 interface Message {
@@ -27,6 +31,9 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false)
   const [readStatus, setReadStatus] = useState<ReadStatus>({ isRead: false })
   const [typingStatus, setTypingStatus] = useState<TypingStatus>({ isTyping: false })
+  const [showPet, setShowPet] = useState(true) // 控制寵物面板顯示
+  const [showShop, setShowShop] = useState(false) // 控制商店顯示
+  const [showAchievements, setShowAchievements] = useState(false) // 控制成就顯示
 
   // 設定AI Chat Manager的回調函數
   useEffect(() => {
@@ -76,7 +83,26 @@ export default function Home() {
     setMessages(prev => [...prev, newMessage])
   }
 
-  // AI訊息處理
+  // 處理寵物互動回饋
+  const handlePetInteraction = (message: string) => {
+    addAiMessage(`🦊 阿狸: ${message}`)
+  }
+
+  // 處理成就解鎖
+  const handleAchievementUnlocked = (achievements: any[]) => {
+    achievements.forEach(achievement => {
+      addAiMessage(`🏆 成就解鎖: ${achievement.title}! ${achievement.description}`)
+    })
+  }
+
+  // 處理商店購買
+  const handleShopPurchase = (item: any, message: string) => {
+    addAiMessage(`🛒 商店: ${message}`)
+    // 如果寵物面板是開著的，可以考慮刷新寵物狀態
+    if (showPet) {
+      // 這裡可以添加刷新寵物狀態的邏輯
+    }
+  }
   const processAIMessage = async (userInput: string) => {
     try {
       setIsLoading(true)
@@ -144,9 +170,24 @@ export default function Home() {
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <button className="relative">
-              <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
+            <PetStatus 
+              compact={true}
+              onPetClick={() => setShowPet(!showPet)}
+            />
+            <button 
+              onClick={() => setShowShop(!showShop)}
+              className="relative"
+            >
+              <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
                 <span className="text-sm">🛒</span>
+              </div>
+            </button>
+            <button 
+              onClick={() => setShowAchievements(!showAchievements)}
+              className="relative"
+            >
+              <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
+                <span className="text-sm">🏆</span>
               </div>
             </button>
           </div>
@@ -155,8 +196,8 @@ export default function Home() {
 
       {/* 主要內容區域 */}
       <div className="flex-1 flex overflow-hidden">
-        {/* 對話區域 - 佔滿整個寬度 */}
-        <div className="flex-1 flex flex-col">
+        {/* 對話區域 */}
+        <div className={`flex flex-col transition-all duration-300 ${showPet ? 'flex-1' : 'w-full'}`}>
           {/* 對話訊息列表 */}
           <div className="flex-1 overflow-y-auto p-4 space-y-4">
             {messages.map((message) => (
@@ -243,6 +284,48 @@ export default function Home() {
             </div>
           </div>
         </div>
+        
+        {/* 寵物面板 */}
+        {showPet && (
+          <div className="w-80 bg-gray-50 border-l border-gray-200 flex-shrink-0 overflow-y-auto">
+            <div className="p-4">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-bold text-gray-900">虛擬寵物 阿狸</h2>
+                <button
+                  onClick={() => setShowPet(false)}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✕
+                </button>
+              </div>
+              <PetDisplay 
+                onInteraction={handlePetInteraction}
+                onAchievementUnlocked={handleAchievementUnlocked}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 商店面板 */}
+        {showShop && (
+          <div className="w-80 bg-gray-50 border-l border-gray-200 flex-shrink-0 overflow-y-auto">
+            <div className="p-4">
+              <PetShop 
+                onPurchase={handleShopPurchase}
+                onClose={() => setShowShop(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* 成就面板 */}
+        {showAchievements && (
+          <div className="w-80 bg-gray-50 border-l border-gray-200 flex-shrink-0 overflow-y-auto">
+            <div className="p-4">
+              <AchievementPanel onClose={() => setShowAchievements(false)} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   )
