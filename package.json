@@ -1,0 +1,44 @@
+{
+  "name": "tanaapp-v1",
+  "version": "1.0.0",
+  "description": "Enterprise Restaurant Management System with AI",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:introspect": "node scripts/db-introspection.js",
+    "db:check": "node scripts/db-watcher.js check",
+    "db:watch": "node scripts/db-watcher.js watch",
+    "integration:test": "tsx scripts/test-integration.ts",
+    "tanapos:test": "npm run integration:test"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "lucide-react": "^0.537.0",
+    "next": "^14.2.31",
+    "openai": "^5.12.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "typescript": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.9",
+    "@types/react": "^18.2.48",
+    "@types/react-dom": "^18.2.18",
+    "autoprefixer": "^10.4.21",
+    "dotenv": "^16.3.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17"
+  },
+  "keywords": [
+    "restaurant",
+    "pos",
+    "ai",
+    "management",
+    "nextjs"
+  ],
+  "author": "Tanawathan Development Team",
+  "license": "MIT"
+}

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { aiChatManager, ReadStatus, TypingStatus } from './utils/aiChatManager'
+import { useState } from 'react'
+import { aiChatManager } from './utils/aiChatManager'
 
 // 消息類型定義
 interface Message {
@@ -9,8 +9,6 @@ interface Message {
   type: 'ai' | 'user'
   content: string
   timestamp: Date
-  isRead?: boolean
-  readAt?: Date
 }
 
 export default function Home() {
@@ -25,34 +23,6 @@ export default function Home() {
   ])
   const [inputText, setInputText] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [readStatus, setReadStatus] = useState<ReadStatus>({ isRead: false })
-  const [typingStatus, setTypingStatus] = useState<TypingStatus>({ isTyping: false })
-
-  // 設定AI Chat Manager的回調函數
-  useEffect(() => {
-    aiChatManager.setReadStatusCallback((status: ReadStatus) => {
-      setReadStatus(status)
-      // 更新最後一條用戶消息的已讀狀態
-      setMessages(prev => {
-        const updated = [...prev]
-        for (let i = updated.length - 1; i >= 0; i--) {
-          if (updated[i].type === 'user') {
-            updated[i] = {
-              ...updated[i],
-              isRead: status.isRead,
-              readAt: status.readAt
-            }
-            break
-          }
-        }
-        return updated
-      })
-    })
-
-    aiChatManager.setTypingStatusCallback((status: TypingStatus) => {
-      setTypingStatus(status)
-    })
-  }, [])
 
   // 添加AI訊息
   const addAiMessage = (content: string) => {
@@ -81,10 +51,6 @@ export default function Home() {
     try {
       setIsLoading(true)
       
-      // 重置狀態
-      setReadStatus({ isRead: false })
-      setTypingStatus({ isTyping: false })
-      
       // 調用AI服務處理訊息
       const result = await aiChatManager.processUserMessage(userInput)
       
@@ -96,7 +62,6 @@ export default function Home() {
       addAiMessage('抱歉，我現在有點忙，請稍後再試 😅')
     } finally {
       setIsLoading(false)
-      setTypingStatus({ isTyping: false })
     }
   }
 
@@ -133,14 +98,7 @@ export default function Home() {
             </div>
             <div>
               <h1 className="text-lg font-bold text-gray-800">TanaAPP</h1>
-              <p className="text-xs text-gray-500">
-                {typingStatus.isTyping 
-                  ? '阿狸正在輸入中...' 
-                  : readStatus.isRead 
-                    ? '已讀 - 泰式餐廳助手'
-                    : '泰式餐廳助手'
-                }
-              </p>
+              <p className="text-xs text-gray-500">泰式餐廳助手</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
@@ -164,58 +122,31 @@ export default function Home() {
                 key={message.id}
                 className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
               >
-                <div className="flex flex-col">
-                  <div
-                    className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                      message.type === 'user'
-                        ? 'bg-orange-500 text-white'
-                        : 'bg-white text-gray-800 shadow-sm border border-gray-200'
-                    }`}
-                  >
-                    <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                    <div className="flex items-center justify-between mt-1">
-                      <p className={`text-xs ${
-                        message.type === 'user' ? 'text-orange-200' : 'text-gray-500'
-                      }`}>
-                        {message.timestamp.toLocaleTimeString('zh-TW', { 
-                          hour: '2-digit', 
-                          minute: '2-digit' 
-                        })}
-                      </p>
-                      {/* 已讀狀態顯示 - 只顯示在用戶消息上 */}
-                      {message.type === 'user' && (
-                        <div className="flex items-center space-x-1">
-                          {message.isRead ? (
-                            <span className="text-orange-200 text-xs flex items-center">
-                              <span className="mr-1">✓✓</span>
-                              已讀
-                            </span>
-                          ) : (
-                            <span className="text-orange-300 text-xs flex items-center">
-                              <span className="mr-1">✓</span>
-                              已送達
-                            </span>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
+                <div
+                  className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                    message.type === 'user'
+                      ? 'bg-orange-500 text-white'
+                      : 'bg-white text-gray-800 shadow-sm border border-gray-200'
+                  }`}
+                >
+                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <p className={`text-xs mt-1 ${
+                    message.type === 'user' ? 'text-orange-200' : 'text-gray-500'
+                  }`}>
+                    {message.timestamp.toLocaleTimeString('zh-TW', { 
+                      hour: '2-digit', 
+                      minute: '2-digit' 
+                    })}
+                  </p>
                 </div>
               </div>
             ))}
             
-            {/* 打字狀態指示器 */}
-            {typingStatus.isTyping && (
+            {/* 載入指示器 */}
+            {isLoading && (
               <div className="flex justify-start">
                 <div className="bg-white text-gray-800 shadow-sm border border-gray-200 px-4 py-2 rounded-lg">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                    </div>
-                    <span className="text-sm text-gray-600">阿狸正在輸入中...</span>
-                  </div>
+                  <p className="text-sm">🤔 讓我想想...</p>
                 </div>
               </div>
             )}

@@ -1,0 +1,1095 @@
+{
+  "introspectionDate": "2025-08-07T09:48:26.595Z",
+  "database": "supabase",
+  "schema": "public",
+  "tables": {
+    "restaurants": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "a8fff0de-a2dd-4749-a80c-08a6102de734"
+        },
+        "name": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "TanawatThai"
+        },
+        "address": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "keelong"
+        },
+        "phone": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "0971715711"
+        },
+        "email": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "info@tanawat.tw"
+        },
+        "website": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "tax_rate": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "service_charge_rate": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "currency": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "TWD"
+        },
+        "timezone": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "Asia/Taipei"
+        },
+        "business_hours": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "settings": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "is_active": {
+          "type": "boolean",
+          "nullable": false,
+          "sampleValue": true
+        },
+        "created_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-07-31T12:43:28.845282+00:00"
+        },
+        "updated_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T13:52:41.811219+00:00"
+        },
+        "metadata": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "custom_fields": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        }
+      },
+      "sampleData": {
+        "id": "a8fff0de-a2dd-4749-a80c-08a6102de734",
+        "name": "TanawatThai",
+        "address": "keelong",
+        "phone": "0971715711",
+        "email": "info@tanawat.tw",
+        "website": null,
+        "tax_rate": 0,
+        "service_charge_rate": 0,
+        "currency": "TWD",
+        "timezone": "Asia/Taipei",
+        "business_hours": null,
+        "settings": null,
+        "is_active": true,
+        "created_at": "2025-07-31T12:43:28.845282+00:00",
+        "updated_at": "2025-08-05T13:52:41.811219+00:00",
+        "metadata": null,
+        "custom_fields": null
+      },
+      "recordCount": 1,
+      "totalRecords": 2
+    },
+    "categories": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "22222222-2222-2222-2222-222222222222"
+        },
+        "restaurant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "11111111-1111-1111-1111-111111111111"
+        },
+        "name": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "飲品"
+        },
+        "description": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "各式飲品"
+        },
+        "sort_order": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 2
+        },
+        "color": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "#10B981"
+        },
+        "icon": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "🥤"
+        },
+        "image_url": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "parent_id": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "level": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 1
+        },
+        "path": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "is_active": {
+          "type": "boolean",
+          "nullable": false,
+          "sampleValue": true
+        },
+        "created_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T07:37:01.09837+00:00"
+        },
+        "updated_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T07:37:01.09837+00:00"
+        },
+        "ai_visibility_score": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 1
+        },
+        "ai_popularity_rank": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "metadata": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        }
+      },
+      "sampleData": {
+        "id": "22222222-2222-2222-2222-222222222222",
+        "restaurant_id": "11111111-1111-1111-1111-111111111111",
+        "name": "飲品",
+        "description": "各式飲品",
+        "sort_order": 2,
+        "color": "#10B981",
+        "icon": "🥤",
+        "image_url": null,
+        "parent_id": null,
+        "level": 1,
+        "path": null,
+        "is_active": true,
+        "created_at": "2025-08-05T07:37:01.09837+00:00",
+        "updated_at": "2025-08-05T07:37:01.09837+00:00",
+        "ai_visibility_score": 1,
+        "ai_popularity_rank": null,
+        "metadata": null
+      },
+      "recordCount": 1,
+      "totalRecords": 9
+    },
+    "orders": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "49d9e50f-6063-4f23-b770-3f648d9ff9fc"
+        },
+        "restaurant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "11111111-1111-1111-1111-111111111111"
+        },
+        "table_id": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "session_id": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "order_number": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "1-847-A2"
+        },
+        "order_type": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "dine_in"
+        },
+        "customer_name": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": ""
+        },
+        "customer_phone": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": ""
+        },
+        "customer_email": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "table_number": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 1
+        },
+        "party_size": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "subtotal": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 180
+        },
+        "discount_amount": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "tax_amount": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "service_charge": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 18
+        },
+        "total_amount": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 198
+        },
+        "status": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "completed"
+        },
+        "payment_status": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "paid"
+        },
+        "ordered_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T18:42:24.025545+00:00"
+        },
+        "confirmed_at": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "preparation_started_at": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "ready_at": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "served_at": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "completed_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T19:29:26.716+00:00"
+        },
+        "estimated_ready_time": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "estimated_prep_time": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "actual_prep_time": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "ai_optimized": {
+          "type": "boolean",
+          "nullable": false,
+          "sampleValue": false
+        },
+        "ai_estimated_prep_time": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "ai_recommendations": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "ai_efficiency_score": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "notes": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "special_instructions": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "source": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "mobile_pos"
+        },
+        "created_by": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "updated_by": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "created_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T18:42:23.036+00:00"
+        },
+        "updated_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T19:29:27.812912+00:00"
+        },
+        "metadata": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        }
+      },
+      "sampleData": {
+        "id": "49d9e50f-6063-4f23-b770-3f648d9ff9fc",
+        "restaurant_id": "11111111-1111-1111-1111-111111111111",
+        "table_id": null,
+        "session_id": null,
+        "order_number": "1-847-A2",
+        "order_type": "dine_in",
+        "customer_name": "",
+        "customer_phone": "",
+        "customer_email": null,
+        "table_number": 1,
+        "party_size": null,
+        "subtotal": 180,
+        "discount_amount": 0,
+        "tax_amount": 0,
+        "service_charge": 18,
+        "total_amount": 198,
+        "status": "completed",
+        "payment_status": "paid",
+        "ordered_at": "2025-08-05T18:42:24.025545+00:00",
+        "confirmed_at": null,
+        "preparation_started_at": null,
+        "ready_at": null,
+        "served_at": null,
+        "completed_at": "2025-08-05T19:29:26.716+00:00",
+        "estimated_ready_time": null,
+        "estimated_prep_time": null,
+        "actual_prep_time": null,
+        "ai_optimized": false,
+        "ai_estimated_prep_time": null,
+        "ai_recommendations": null,
+        "ai_efficiency_score": null,
+        "notes": null,
+        "special_instructions": null,
+        "source": "mobile_pos",
+        "created_by": null,
+        "updated_by": null,
+        "created_at": "2025-08-05T18:42:23.036+00:00",
+        "updated_at": "2025-08-05T19:29:27.812912+00:00",
+        "metadata": null
+      },
+      "recordCount": 1,
+      "totalRecords": 52
+    },
+    "order_items": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "11111111-1111-1111-1111-111111111301"
+        },
+        "order_id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "11111111-1111-1111-1111-111111111201"
+        },
+        "product_id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "a1111111-1111-1111-1111-111111111111"
+        },
+        "combo_id": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "item_type": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "product"
+        },
+        "product_name": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "招牌牛肉麵"
+        },
+        "product_sku": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "variant_name": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "quantity": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 1
+        },
+        "unit_price": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 180
+        },
+        "total_price": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 180
+        },
+        "cost_price": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "status": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "preparing"
+        },
+        "ordered_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T07:37:01.837179+00:00"
+        },
+        "preparation_started_at": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "ready_at": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "served_at": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "estimated_prep_time": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "actual_prep_time": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "special_instructions": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "modifiers": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "kitchen_station": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "priority_level": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 3
+        },
+        "quality_checked": {
+          "type": "boolean",
+          "nullable": false,
+          "sampleValue": false
+        },
+        "created_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T07:37:01.837179+00:00"
+        },
+        "updated_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T07:37:01.837179+00:00"
+        }
+      },
+      "sampleData": {
+        "id": "11111111-1111-1111-1111-111111111301",
+        "order_id": "11111111-1111-1111-1111-111111111201",
+        "product_id": "a1111111-1111-1111-1111-111111111111",
+        "combo_id": null,
+        "item_type": "product",
+        "product_name": "招牌牛肉麵",
+        "product_sku": null,
+        "variant_name": null,
+        "quantity": 1,
+        "unit_price": 180,
+        "total_price": 180,
+        "cost_price": 0,
+        "status": "preparing",
+        "ordered_at": "2025-08-05T07:37:01.837179+00:00",
+        "preparation_started_at": null,
+        "ready_at": null,
+        "served_at": null,
+        "estimated_prep_time": null,
+        "actual_prep_time": null,
+        "special_instructions": null,
+        "modifiers": null,
+        "kitchen_station": null,
+        "priority_level": 3,
+        "quality_checked": false,
+        "created_at": "2025-08-05T07:37:01.837179+00:00",
+        "updated_at": "2025-08-05T07:37:01.837179+00:00"
+      },
+      "recordCount": 1,
+      "totalRecords": 90
+    },
+    "tables": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "11111111-1111-1111-1111-111111111108"
+        },
+        "restaurant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "11111111-1111-1111-1111-111111111111"
+        },
+        "table_number": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 8
+        },
+        "name": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "C02"
+        },
+        "capacity": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 6
+        },
+        "min_capacity": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 1
+        },
+        "max_capacity": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "status": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "available"
+        },
+        "floor_level": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 1
+        },
+        "zone": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "position_x": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "position_y": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "table_type": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "square"
+        },
+        "features": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "qr_code": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "qr_enabled": {
+          "type": "boolean",
+          "nullable": false,
+          "sampleValue": true
+        },
+        "ai_assignment_priority": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 5
+        },
+        "ai_features_score": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "current_session_id": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "last_occupied_at": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "last_cleaned_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-06T10:51:29.726+00:00"
+        },
+        "cleaning_duration_minutes": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 15
+        },
+        "is_active": {
+          "type": "boolean",
+          "nullable": false,
+          "sampleValue": true
+        },
+        "created_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T07:37:01.433733+00:00"
+        },
+        "updated_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-06T10:51:29.945658+00:00"
+        },
+        "metadata": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        }
+      },
+      "sampleData": {
+        "id": "11111111-1111-1111-1111-111111111108",
+        "restaurant_id": "11111111-1111-1111-1111-111111111111",
+        "table_number": 8,
+        "name": "C02",
+        "capacity": 6,
+        "min_capacity": 1,
+        "max_capacity": null,
+        "status": "available",
+        "floor_level": 1,
+        "zone": null,
+        "position_x": 0,
+        "position_y": 0,
+        "table_type": "square",
+        "features": null,
+        "qr_code": null,
+        "qr_enabled": true,
+        "ai_assignment_priority": 5,
+        "ai_features_score": null,
+        "current_session_id": null,
+        "last_occupied_at": null,
+        "last_cleaned_at": "2025-08-06T10:51:29.726+00:00",
+        "cleaning_duration_minutes": 15,
+        "is_active": true,
+        "created_at": "2025-08-05T07:37:01.433733+00:00",
+        "updated_at": "2025-08-06T10:51:29.945658+00:00",
+        "metadata": null
+      },
+      "recordCount": 1,
+      "totalRecords": 8
+    },
+    "payments": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "e5246cb1-100a-4fd4-820d-7a46ba8b5b5f"
+        },
+        "order_id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "e0c1a95c-a74c-4ff9-b811-abe7eace2ed5"
+        },
+        "payment_method": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "cash"
+        },
+        "payment_provider": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "amount": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 943
+        },
+        "received_amount": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 1000
+        },
+        "change_amount": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 180
+        },
+        "tip_amount": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "transaction_id": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "reference_number": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "authorization_code": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "card_last_four": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "card_type": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "card_brand": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "mobile_provider": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "mobile_account": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "status": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "completed"
+        },
+        "processed_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T13:31:26.065+00:00"
+        },
+        "confirmed_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T13:31:26.065+00:00"
+        },
+        "refund_amount": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "refund_reason": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "refunded_at": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "processed_by": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "terminal_id": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "created_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T13:31:27.803695+00:00"
+        },
+        "updated_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T13:31:27.803695+00:00"
+        },
+        "metadata": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        }
+      },
+      "sampleData": {
+        "id": "e5246cb1-100a-4fd4-820d-7a46ba8b5b5f",
+        "order_id": "e0c1a95c-a74c-4ff9-b811-abe7eace2ed5",
+        "payment_method": "cash",
+        "payment_provider": null,
+        "amount": 943,
+        "received_amount": 1000,
+        "change_amount": 180,
+        "tip_amount": 0,
+        "transaction_id": null,
+        "reference_number": null,
+        "authorization_code": null,
+        "card_last_four": null,
+        "card_type": null,
+        "card_brand": null,
+        "mobile_provider": null,
+        "mobile_account": null,
+        "status": "completed",
+        "processed_at": "2025-08-05T13:31:26.065+00:00",
+        "confirmed_at": "2025-08-05T13:31:26.065+00:00",
+        "refund_amount": 0,
+        "refund_reason": null,
+        "refunded_at": null,
+        "processed_by": null,
+        "terminal_id": null,
+        "created_at": "2025-08-05T13:31:27.803695+00:00",
+        "updated_at": "2025-08-05T13:31:27.803695+00:00",
+        "metadata": null
+      },
+      "recordCount": 1,
+      "totalRecords": 41
+    },
+    "suppliers": {
+      "columns": {
+        "id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "11111111-1111-1111-1111-111111112301"
+        },
+        "restaurant_id": {
+          "type": "uuid",
+          "nullable": false,
+          "sampleValue": "11111111-1111-1111-1111-111111111111"
+        },
+        "name": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "新鮮食材有限公司"
+        },
+        "code": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "contact_person": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "王經理"
+        },
+        "phone": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "02-1234-5678"
+        },
+        "email": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "wang@freshfood.com"
+        },
+        "website": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "address": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "台北市中山區民生東路123號"
+        },
+        "payment_terms": {
+          "type": "text",
+          "nullable": false,
+          "sampleValue": "net_30"
+        },
+        "delivery_days": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "min_order_amount": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "credit_limit": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "discount_rate": {
+          "type": "integer",
+          "nullable": false,
+          "sampleValue": 0
+        },
+        "quality_rating": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "delivery_rating": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "service_rating": {
+          "type": "nullable",
+          "nullable": true,
+          "sampleValue": null
+        },
+        "is_active": {
+          "type": "boolean",
+          "nullable": false,
+          "sampleValue": true
+        },
+        "created_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T07:42:38.420616+00:00"
+        },
+        "updated_at": {
+          "type": "timestamp",
+          "nullable": false,
+          "sampleValue": "2025-08-05T07:42:38.420616+00:00"
+        }
+      },
+      "sampleData": {
+        "id": "11111111-1111-1111-1111-111111112301",
+        "restaurant_id": "11111111-1111-1111-1111-111111111111",
+        "name": "新鮮食材有限公司",
+        "code": null,
+        "contact_person": "王經理",
+        "phone": "02-1234-5678",
+        "email": "wang@freshfood.com",
+        "website": null,
+        "address": "台北市中山區民生東路123號",
+        "payment_terms": "net_30",
+        "delivery_days": null,
+        "min_order_amount": 0,
+        "credit_limit": null,
+        "discount_rate": 0,
+        "quality_rating": null,
+        "delivery_rating": null,
+        "service_rating": null,
+        "is_active": true,
+        "created_at": "2025-08-05T07:42:38.420616+00:00",
+        "updated_at": "2025-08-05T07:42:38.420616+00:00"
+      },
+      "recordCount": 1,
+      "totalRecords": 2
+    }
+  }
+}
