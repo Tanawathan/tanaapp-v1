@@ -14,13 +14,21 @@ export interface StructuredOutput {
   confidence: number
 }
 
+// 完整 AI 回應介面
+export interface AIResponseData {
+  response: string
+  reservationCard?: any
+  reservationTrigger?: any
+  confirmationTrigger?: any
+}
+
 /**
  * 一般對話問答 - 通過 API 路由調用 OpenAI
  */
 export async function chatWithAI(
   messages: AIMessage[],
   systemPrompt?: string
-): Promise<string> {
+): Promise<AIResponseData> {
   try {
     const response = await fetch('/api/chat', {
       method: 'POST',
@@ -40,15 +48,24 @@ export async function chatWithAI(
     const data = await response.json()
     
     if (data.success) {
-      return data.response
+      return {
+        response: data.response,
+        reservationCard: data.reservationCard,
+        reservationTrigger: data.reservationTrigger,
+        confirmationTrigger: data.confirmationTrigger
+      }
     } else {
       console.error('API Error:', data.error)
-      return data.response || '抱歉，我現在無法回應 😅'
+      return {
+        response: data.response || '抱歉，我現在無法回應 😅'
+      }
     }
 
   } catch (error) {
     console.error('Chat AI Error:', error)
-    return '不好意思，我現在有點忙，請稍後再試 🙏'
+    return {
+      response: '抱歉，我現在無法回應 😅'
+    }
   }
 }
 
@@ -68,10 +85,10 @@ export async function functionCallAI(
 }> {
   try {
     // 目前簡化為對話模式，後續可擴展為函式調用
-    const response = await chatWithAI(messages, systemPrompt)
+    const aiResponseData = await chatWithAI(messages, systemPrompt)
     
     return {
-      response,
+      response: aiResponseData.response,
       functionCall: undefined // 暫時不支持函式調用
     }
   } catch (error) {
@@ -113,7 +130,7 @@ export async function detectScenario(userInput: string): Promise<{
     ], '你是一個場景分析器，專門判斷用戶意圖。請只回傳JSON格式的結果。')
 
     try {
-      const parsed = JSON.parse(result)
+      const parsed = JSON.parse(result.response)
       return {
         needsFunction: parsed.needsFunction || false,
         scenario: parsed.scenario || 'chat',

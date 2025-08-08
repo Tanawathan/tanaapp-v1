@@ -6,6 +6,7 @@ import PetDisplay from './components/PetDisplay'
 import PetStatus from './components/PetStatus'
 import PetShop from './components/PetShop'
 import AchievementPanel from './components/AchievementPanel'
+import ReservationCard from './components/ReservationCard'
 
 // 消息類型定義
 interface Message {
@@ -15,6 +16,7 @@ interface Message {
   timestamp: Date
   isRead?: boolean
   readAt?: Date
+  reservationCard?: any // 添加預約卡片支持
 }
 
 export default function Home() {
@@ -34,7 +36,7 @@ export default function Home() {
   const [showPet, setShowPet] = useState(false) // 改為預設關閉，手機優先
   const [showShop, setShowShop] = useState(false) // 控制商店顯示
   const [showAchievements, setShowAchievements] = useState(false) // 控制成就顯示
-  const [currentView, setCurrentView] = useState<'chat' | 'pet' | 'shop' | 'achievements'>('chat') // 手機版切換
+  const [currentView, setCurrentView] = useState<'chat' | 'pet' | 'shop' | 'achievements' | 'confirm'>('chat') // 手機版切換
 
   // 設定AI Chat Manager的回調函數
   useEffect(() => {
@@ -63,12 +65,13 @@ export default function Home() {
   }, [])
 
   // 添加AI訊息
-  const addAiMessage = (content: string) => {
+  const addAiMessage = (content: string, reservationCard?: any) => {
     const newMessage: Message = {
       id: Date.now().toString(),
       type: 'ai',
       content,
-      timestamp: new Date()
+      timestamp: new Date(),
+      reservationCard
     }
     setMessages(prev => [...prev, newMessage])
   }
@@ -96,8 +99,38 @@ export default function Home() {
     })
   }
 
+  // 處理預約卡片提交
+  const handleReservationSubmit = async (formData: any) => {
+    try {
+      // 構建預約觸發器格式
+      const triggerMessage = `[RESERVATION_TRIGGER]
+action: create_reservation
+customer_name: ${formData.customer_name}
+customer_phone: ${formData.customer_phone}
+party_size: ${formData.party_size}
+reservation_date: ${formData.reservation_date}
+reservation_time: ${formData.reservation_time}
+special_requests: ${formData.special_requests || ''}
+restaurant_id: default
+[/RESERVATION_TRIGGER]`
+
+      // 顯示處理中訊息
+      addAiMessage('🔄 正在為您處理預約申請，請稍候...')
+
+      // 處理預約
+      const result = await aiChatManager.processUserMessage(triggerMessage)
+      
+      // 添加處理結果
+      addAiMessage(result.response)
+
+    } catch (error) {
+      console.error('預約處理錯誤:', error)
+      addAiMessage('❌ 預約處理發生錯誤，請稍後再試或直接致電餐廳。')
+    }
+  }
+
   // 處理視圖切換
-  const handleViewChange = (view: 'chat' | 'pet' | 'shop' | 'achievements') => {
+  const handleViewChange = (view: 'chat' | 'pet' | 'shop' | 'achievements' | 'confirm') => {
     setCurrentView(view)
     // 在桌面版本也同步更新側邊欄狀態
     setShowPet(view === 'pet')
@@ -124,8 +157,8 @@ export default function Home() {
       // 調用AI服務處理訊息
       const result = await aiChatManager.processUserMessage(userInput)
       
-      // 添加AI回應
-      addAiMessage(result.response)
+      // 添加AI回應和卡片
+      addAiMessage(result.response, result.reservationCard)
 
     } catch (error) {
       console.error('AI Processing Error:', error)
@@ -184,6 +217,15 @@ export default function Home() {
               compact={true}
               onPetClick={() => handleViewChange('pet')}
             />
+            <button 
+              onClick={() => handleViewChange('confirm')}
+              className="relative"
+              title="確認查詢"
+            >
+              <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center hover:bg-gray-200 transition-colors">
+                <span className="text-sm">🔍</span>
+              </div>
+            </button>
             <button 
               onClick={() => handleViewChange('shop')}
               className="relative"
@@ -253,6 +295,16 @@ export default function Home() {
                           )}
                         </div>
                       </div>
+                      
+                      {/* 顯示預約卡片 */}
+                      {message.type === 'ai' && message.reservationCard && (
+                        <div className="mt-3">
+                          <ReservationCard
+                            cardData={message.reservationCard}
+                            onSubmit={handleReservationSubmit}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -321,6 +373,16 @@ export default function Home() {
               <AchievementPanel onClose={() => handleViewChange('chat')} />
             </div>
           )}
+
+          {currentView === 'confirm' && (
+            <div className="flex-1 overflow-y-auto">
+              <iframe 
+                src="/confirm" 
+                className="w-full h-full border-none"
+                title="確認查詢系統"
+              />
+            </div>
+          )}
         </div>
 
         {/* 桌面版左右分欄布局 */}
@@ -370,6 +432,16 @@ export default function Home() {
                         )}
                       </div>
                     </div>
+                    
+                    {/* 顯示預約卡片 */}
+                    {message.type === 'ai' && message.reservationCard && (
+                      <div className="mt-3">
+                        <ReservationCard
+                          cardData={message.reservationCard}
+                          onSubmit={handleReservationSubmit}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -459,7 +531,7 @@ export default function Home() {
       {/* 手機版底部導航欄 */}
       <div className="lg:hidden">
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-20">
-          <div className="grid grid-cols-4 gap-0">
+          <div className="grid grid-cols-5 gap-0">
             <button
               onClick={() => setCurrentView('chat')}
               className={`flex flex-col items-center py-2 px-1 ${
@@ -481,6 +553,17 @@ export default function Home() {
             >
               <span className="text-lg">🦊</span>
               <span className="text-xs mt-1">阿狸</span>
+            </button>
+            <button
+              onClick={() => setCurrentView('confirm')}
+              className={`flex flex-col items-center py-2 px-1 ${
+                currentView === 'confirm'
+                  ? 'text-orange-500 bg-orange-50'
+                  : 'text-gray-500'
+              }`}
+            >
+              <span className="text-lg">🔍</span>
+              <span className="text-xs mt-1">確認</span>
             </button>
             <button
               onClick={() => setCurrentView('shop')}

@@ -1,16 +1,15 @@
 import { createClient } from '@supabase/supabase-js'
 
+// 環境變數檢查和預設值
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'demo-key'
+const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'demo-service-key'
+
 // 客戶端 Supabase 實例 (用於前端)
-export const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
+export const supabase = createClient(supabaseUrl, supabaseAnonKey)
 
 // 服務端 Supabase 實例 (具有完整權限)
-export const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey)
 
 // 資料庫表格名稱常量
 export const TABLES = {

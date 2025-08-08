@@ -1,8 +1,10 @@
-import { chatWithAI, AIMessage } from '../lib/openai';
+import { chatWithAI, AIMessage, AIResponseData } from '../lib/openai';
 import { PromptBuilder } from '../lib/prompt-engineering';
+import { ReservationTriggerParser, ReservationIntentDetector } from '../lib/reservation-trigger-parser';
 
 export interface ChatResponse {
   response: string;
+  reservationCard?: any;
   functionCall?: {
     name: string;
     arguments: any;
@@ -186,30 +188,76 @@ export class AIChatManager {
       // 8. 調用 OpenAI API - 傳遞除了系統消息外的對話歷史
       const messagesForAI = this.conversationHistory.slice(1); // 跳過系統消息
       const systemMessage = this.conversationHistory[0].content;
-      const aiResponse = await chatWithAI(messagesForAI, systemMessage);
+      const aiResponseData = await chatWithAI(messagesForAI, systemMessage);
 
-      // 9. 等待剩餘的回覆時間
+      // 9. 檢查是否有預約卡片
+      let reservationCard = null;
+      if (aiResponseData.reservationCard) {
+        console.log('🎫 檢測到預約卡片:', aiResponseData.reservationCard);
+        reservationCard = aiResponseData.reservationCard;
+      }
+
+      // 10. 處理餐廳預約觸發器（傳統流程）
+      let cleanAIResponse = aiResponseData.response;
+      let reservationResults = [];
+      
+      const reservationTriggers = ReservationTriggerParser.parseReservationTriggers(cleanAIResponse);
+      
+      if (reservationTriggers.length > 0) {
+        console.log(`🏮 檢測到預約觸發器: ${reservationTriggers.length}個`);
+        
+        try {
+          const processingResult = await ReservationTriggerParser.processReservationTriggers(reservationTriggers);
+          reservationResults = processingResult.results;
+          
+          if (processingResult.success) {
+            console.log('✅ 預約處理成功');
+            // 添加成功訊息
+            const successMessage = ReservationTriggerParser.generateSuccessResponse(reservationResults);
+            if (successMessage) {
+              cleanAIResponse += successMessage;
+            }
+          } else {
+            console.error('❌ 預約處理失敗:', processingResult.errors);
+            // 添加錯誤訊息
+            const errorMessage = ReservationTriggerParser.generateErrorResponse(processingResult.errors);
+            if (errorMessage) {
+              cleanAIResponse += errorMessage;
+            }
+          }
+          
+        } catch (error) {
+          console.error('預約觸發器處理異常:', error);
+          cleanAIResponse += `\n\n❌ 預約處理遇到問題，請稍後再試或直接致電餐廳預約。`;
+        }
+        
+        // 清理預約標記
+        cleanAIResponse = ReservationTriggerParser.cleanResponse(cleanAIResponse);
+      }
+
+      // 10. 等待剩餘的回覆時間
       const remainingTime = Math.max(0, responseTime - 1000); // 預留1秒給API調用時間
       await this.delay(remainingTime);
 
-      // 10. 停止「正在輸入」狀態
+      // 11. 停止「正在輸入」狀態
       if (this.typingStatusCallback) {
         this.typingStatusCallback({
           isTyping: false
         });
       }
 
-      // 11. 添加AI回應到對話歷史
+      // 12. 添加清理後的AI回應到對話歷史
       this.conversationHistory.push({
         role: 'assistant',
-        content: aiResponse
+        content: cleanAIResponse
       });
 
       // 12. 維護對話歷史長度
       this.maintainHistoryLength();
 
       return {
-        response: aiResponse,
+        response: cleanAIResponse,
+        reservationCard: reservationCard,
         functionCall: undefined // 暫時不支援函數調用
       };
 
