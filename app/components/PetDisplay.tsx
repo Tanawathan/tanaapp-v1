@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { VirtualPet } from '../types/pet'
 import { petManager } from '../lib/petManager'
 
@@ -14,11 +14,39 @@ export default function PetDisplay({ onInteraction, onAchievementUnlocked }: Pet
   const [isLoading, setIsLoading] = useState(true)
   const [interactionCooldown, setInteractionCooldown] = useState(false)
   const [showStats, setShowStats] = useState(false)
+  const [interactions, setInteractions] = useState<any[]>([])
+  const [isLoadingInteractions, setIsLoadingInteractions] = useState(false)
+  const [autoRefresh, setAutoRefresh] = useState(true)
+  const pollRef = useRef<NodeJS.Timeout | null>(null)
 
   // 載入寵物資料
   useEffect(() => {
     loadPet()
   }, [])
+
+  // 啟動 / 停止輪詢互動紀錄
+  useEffect(() => {
+    if (autoRefresh) {
+      fetchInteractions()
+      pollRef.current = setInterval(fetchInteractions, 8000)
+    } else if (pollRef.current) {
+      clearInterval(pollRef.current)
+    }
+    return () => { if (pollRef.current) clearInterval(pollRef.current) }
+  }, [autoRefresh])
+
+  const fetchInteractions = async () => {
+    try {
+      setIsLoadingInteractions(true)
+      const res = await fetch('/api/pet/interactions?userId=default&limit=8')
+      const data = await res.json()
+      if (data.success) setInteractions(data.interactions)
+    } catch (e) {
+      // 忽略暫時性錯誤
+    } finally {
+      setIsLoadingInteractions(false)
+    }
+  }
 
   const loadPet = async () => {
     try {
@@ -90,7 +118,7 @@ export default function PetDisplay({ onInteraction, onAchievementUnlocked }: Pet
   const recommendedActions = petManager.getRecommendedActions(pet)
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 space-y-6">
+  <div className="bg-white rounded-2xl shadow-lg p-6 space-y-6">
       {/* 寵物頭像和基本資訊 */}
       <div className="text-center">
         <div className="relative inline-block">
@@ -189,10 +217,23 @@ export default function PetDisplay({ onInteraction, onAchievementUnlocked }: Pet
         </div>
       </div>
 
-      {/* 詳細統計 */}
+      {/* 詳細統計與互動紀錄切換 */}
       {showStats && (
-        <div className="bg-gray-50 rounded-lg p-4 space-y-3">
-          <h4 className="text-lg font-semibold text-gray-900">詳細統計</h4>
+        <div className="bg-gray-50 rounded-lg p-4 space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-lg font-semibold text-gray-900">詳細統計</h4>
+            <div className="flex items-center space-x-2 text-xs">
+              <label className="flex items-center space-x-1 cursor-pointer select-none">
+                <input type="checkbox" className="rounded" checked={autoRefresh} onChange={e=>setAutoRefresh(e.target.checked)} />
+                <span>自動刷新</span>
+              </label>
+              <button
+                onClick={fetchInteractions}
+                className="px-2 py-1 bg-white border border-gray-300 rounded hover:bg-gray-100 disabled:opacity-50"
+                disabled={isLoadingInteractions}
+              >{isLoadingInteractions?'更新中':'刷新'}</button>
+            </div>
+          </div>
           
           <div className="grid grid-cols-2 gap-4">
             <div className="text-center">
@@ -216,6 +257,21 @@ export default function PetDisplay({ onInteraction, onAchievementUnlocked }: Pet
           <div className="text-center pt-2 border-t border-gray-200">
             <div className="text-lg font-bold text-gray-700">總互動: {pet.totalInteractions}</div>
             <div className="text-sm text-gray-500">總餵食: {pet.totalFeedings}</div>
+          </div>
+          {/* 最近互動紀錄 */}
+          <div className="pt-4 border-t border-gray-200 space-y-2">
+            <h5 className="text-sm font-semibold text-gray-700">最近互動</h5>
+            <div className="space-y-1 max-h-40 overflow-y-auto pr-1 text-xs">
+              {interactions.length === 0 && (
+                <div className="text-gray-400">尚無紀錄</div>
+              )}
+              {interactions.map((i:any) => (
+                <div key={i.id} className="flex items-start justify-between bg-white rounded border border-gray-200 px-2 py-1">
+                  <span className="font-medium text-gray-600">{i.interaction_type}</span>
+                  <span className="text-gray-400 ml-2 whitespace-nowrap">{new Date(i.created_at).toLocaleTimeString('zh-TW',{hour:'2-digit',minute:'2-digit'})}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

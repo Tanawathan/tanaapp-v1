@@ -77,6 +77,30 @@ export interface Table {
   updated_at?: string
 }
 
+export interface Reservation {
+  id: string
+  restaurant_id: string
+  table_id?: string | null
+  customer_name: string
+  customer_phone: string
+  customer_email?: string | null
+  party_size: number
+  reservation_date: string
+  reservation_time: string
+  status: 'pending' | 'confirmed' | 'seated' | 'completed' | 'cancelled' | 'no_show'
+  special_requests?: string | null
+  notes?: string | null
+  created_via?: 'ai_chat' | 'manual' | 'phone' | 'website'
+  confidence_score?: number | null
+  created_at?: string
+  updated_at?: string
+  confirmed_at?: string | null
+  seated_at?: string | null
+  completed_at?: string | null
+  cancelled_at?: string | null
+  metadata?: any
+}
+
 export interface Order {
   id: string
   restaurant_id?: string

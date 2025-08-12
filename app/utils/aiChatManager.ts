@@ -1,6 +1,8 @@
 import { chatWithAI, AIMessage, AIResponseData } from '../lib/openai';
+import { posInterpret, posExecute, summarizeActionResult, getPosMeta } from '../lib/posAiBridge';
 import { PromptBuilder } from '../lib/prompt-engineering';
 import { ReservationTriggerParser, ReservationIntentDetector } from '../lib/reservation-trigger-parser';
+import { RestaurantReservationManager } from '../lib/reservation-manager';
 
 export interface ChatResponse {
   response: string;
@@ -27,6 +29,7 @@ export class AIChatManager {
   private databaseContext: any = null;
   private readStatusCallback?: (status: ReadStatus) => void;
   private typingStatusCallback?: (status: TypingStatus) => void;
+  private lastPendingAction: { action: string; args: any } | null = null;
 
   constructor() {
     // 初始化基礎系統提示 - 使用動態提示詞生成器
@@ -185,10 +188,91 @@ export class AIChatManager {
         content: userInput
       });
 
-      // 8. 調用 OpenAI API - 傳遞除了系統消息外的對話歷史
-      const messagesForAI = this.conversationHistory.slice(1); // 跳過系統消息
-      const systemMessage = this.conversationHistory[0].content;
-      const aiResponseData = await chatWithAI(messagesForAI, systemMessage);
+      // 若使用者輸入確認 token，直接嘗試執行暫存動作
+      if (/^CONFIRM-[A-Z_]+$/.test(userInput.trim()) && this.lastPendingAction) {
+        try {
+          const token = userInput.trim();
+          const pending = this.lastPendingAction;
+          const execRes: any = await posExecute(pending.action, pending.args, token);
+          this.lastPendingAction = null;
+          const resp = summarizeActionResult(pending.action, execRes);
+          // 插入回答並維護歷史後直接返回
+          this.conversationHistory.push({ role: 'assistant', content: resp });
+          this.maintainHistoryLength();
+          if (this.typingStatusCallback) this.typingStatusCallback({ isTyping: false });
+          return { response: resp };
+        } catch (e) {
+          const msg = (e as any)?.message || '執行失敗';
+          return { response: `❌ 確認後執行失敗: ${msg}` };
+        }
+      }
+
+      // 8. 優先呼叫 POS AI 進行動作解讀與可能執行
+      let aiResponseData: AIResponseData = { response: '' }
+      let actionHandled = false
+      try {
+        const posMeta = await getPosMeta() // warm meta (optional)
+        const interpreted = await posInterpret(userInput)
+        if (interpreted && interpreted.action && interpreted.action !== 'unknown') {
+          // 若需要確認的動作，先提供確認 token 提示
+            if (posMeta && posMeta.confirmRequired.includes(interpreted.action)) {
+              this.lastPendingAction = { action: interpreted.action, args: interpreted.arguments };
+              aiResponseData.response = `⚠️ 準備執行動作: ${interpreted.action}\n請輸入: CONFIRM-${interpreted.action.toUpperCase()} 以確認。`;
+            } else {
+              // 直接執行
+              const execRes: any = await posExecute(interpreted.action, interpreted.arguments)
+              aiResponseData.response = summarizeActionResult(interpreted.action, execRes)
+            }
+          actionHandled = true
+        } else if (interpreted && interpreted.action === 'clarify') {
+          // 提供指引，列出支援動作
+          const supported = posMeta ? posMeta.whitelist.filter(a=>a!=='clarify' && a!=='unknown').join(', ') : ''
+          aiResponseData.response = `我可以協助的 POS 動作包含：${supported}。請用自然語句，例如："幫我 8/20 晚上 18:30 訂四位" 或 "查 8/20 四人有哪些時段"。`
+          actionHandled = true
+        }
+      } catch (e) {
+        console.warn('POS AI integration skipped:', (e as any)?.message)
+      }
+
+      if (!actionHandled) {
+        // Fallback Path: If POS AI didn't handle and we detect reservation intent, attempt lightweight local reservation flow
+        try {
+          const hasReservationIntent = ReservationIntentDetector.detectReservationIntent(userInput)
+          if (hasReservationIntent) {
+            const parsed = RestaurantReservationManager.parseReservationIntent(userInput)
+            const validation = RestaurantReservationManager.validateReservationData(parsed)
+            if (validation.isValid) {
+              const createRes = await RestaurantReservationManager.createReservation(parsed as any)
+              if (createRes.success) {
+                const confirmMsg = RestaurantReservationManager.generateConfirmationMessage(
+                  parsed as any,
+                  createRes.reservationId || 'TEMP',
+                  '系統自動安排'
+                )
+                aiResponseData = { response: confirmMsg }
+                actionHandled = true
+              } else {
+                aiResponseData = { response: `❌ 預約建立失敗：${createRes.error || '未知錯誤'}` }
+                actionHandled = true
+              }
+            } else {
+              // Ask user for missing fields succinctly
+              const missingList = validation.missing.join('、')
+              aiResponseData = { response: `請提供以下預約資訊：${missingList}。格式舉例：「我是王小明 0912345678 明天 18:30 4人」` }
+              actionHandled = true
+            }
+          }
+        } catch (e) {
+          console.warn('Fallback reservation flow error:', (e as any)?.message)
+        }
+      }
+
+      if (!actionHandled) {
+        // 回退到原本 OpenAI 對話
+        const messagesForAI = this.conversationHistory.slice(1); // 跳過系統消息
+        const systemMessage = this.conversationHistory[0].content;
+        aiResponseData = await chatWithAI(messagesForAI, systemMessage);
+      }
 
       // 9. 檢查是否有預約卡片
       let reservationCard = null;
